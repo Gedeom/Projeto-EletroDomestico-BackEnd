@@ -1,6 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\EletrodomesticoController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MarcaController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +17,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::post('login', [UserController::class, 'login'])->name('user.login');
+
+Route::group(['middleware' => ['cors']], function () {
+    Route::post('login', [LoginController::class, 'login'])->name('login');
+    Route::post('users', [UserController::class, 'store'])->name('users.store');
+});
+
+Route::group(['middleware' => ['cors', 'jwt.verify']], function () {
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    //Users
+    Route::apiResource('users', UserController::class, ['except' => 'store']);
+    Route::post('logout', [UserController::class, 'logout'])->name('users.logout');
+
+    //Brands
+    Route::apiResource('brands', MarcaController::class);
+
+    //appliances
+    Route::apiResource('appliances', EletrodomesticoController::class);
 });
