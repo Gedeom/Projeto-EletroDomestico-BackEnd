@@ -22,14 +22,14 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['cors']], function () {
     Route::post('login', [LoginController::class, 'login'])->name('login');
     Route::post('users', [UserController::class, 'store'])->name('users.store');
+    Route::get('users', [UserController::class, 'index'])->name('users.index');
 });
 
 Route::group(['middleware' => ['cors', 'jwt.verify']], function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
     //Users
-    Route::apiResource('users', UserController::class, ['except' => 'store']);
-    Route::post('logout', [UserController::class, 'logout'])->name('users.logout');
+    Route::apiResource('users', UserController::class, ['except' => ['store','index']]);
 
     //Brands
     Route::apiResource('brands', MarcaController::class);
